@@ -8,48 +8,12 @@ const {
 
 
 const config = require('./config');
-const ffmpeg = require('fluent-ffmpeg');
-const {execFile} = require('child_process');
-const cwebp = require('cwebp-bin');
-const { exec } = require('child_process')
-const { sms } = require('./lib/message');
-const { imageToWebp, videoToWebp, writeExif } = require('./lib/stic')
+
+
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep } = require('./lib/functions')
 const fs = require('fs');
 const ownerNumber = ['94701629707']
-const prefix = '.'
-const axios = require('axios');
-const { yt720 ,  yt480 ,  yt360 } = require('./lib/ytmp4');
-const ytmp3 = require('./lib/ytmp3');
-const apk_link = require('./lib/playstore');
-const { xnxxSearch, xnxxDown, xvideosSearch, xvideosDown } = require('./lib/xnxxdl')
-
-const yts = require( 'yt-search' )
-
-
-async function ytinfo(name) {
-
-         let arama = await yts(name);
-        arama = arama.all;
-        if(arama.length < 1) { 
-        let result = { status : false} 
-        return result 
-         } 
-        else {
-        let thumbnail = arama[0].thumbnail;
-        let title = arama[0].title.replace(/ /gi, '+');
-        let title2 = arama[0].title
-        let views = arama[0].views;
-        let author = arama[0].author.name;
-        let url = arama[0].url
-        let result = { msg : '╔══[🐶𝙱𝙾𝙱𝙸𝚉 𝙱𝙾𝚃🐕]══╗\n╠  *📥YT DOWNLOADER📤*  ╣\n╚═════════════╝\n\n║📽️ɴᴀᴍᴇ: ' + title2 + '\n\n║👁️ᴠɪᴇᴡs: ' + views + '\n\n║📹 ᴄʜᴀɴɴᴇʟ: ' + author + '\n\n║🖇️ᴜʀʟ: ' + url + '\n\n╚═══════════◈' , 
-                      thumbnail : thumbnail ,
-                      yuturl: url }
-        return result
- 
-        }
-}
-
+const prefix = '/'
 
 async function cmd(conn , mek ) {
 
@@ -91,125 +55,7 @@ mek = mek.messages[0]
 		conn.sendMessage(from , { text: 'I am Online Now' }, { quoted: mek } )
          } 
         break
-		      
-		case 'porn' : 
-		   try {
-			if (!q) return await conn.sendMessage(from , { text: 'need keyword' }, { quoted: mek } )   
-			const buttons = [
-{buttonId: prefix +'xnxx ' + q, buttonText: {displayText: 'From xnxx.com'}, type: 1},
-{buttonId: prefix +'xvideos ' + q, buttonText: {displayText: 'From Xvideos.com'}, type: 1},
-]
-			await conn.sendMessage(from, { image: {url: 'https://d2gg9evh47fn9z.cloudfront.net/1600px_COLOURBOX8142847.jpg'  }, caption: 'මොන Website එකෙන්ද ඕනි' , footer: config.FOOTER , buttons: buttons , headerType: 4} , { quoted: mek } )	
-			   
-		   } 
-		      catch(e) {
-		      await conn.sendMessage(from , { text: 'error\n\n' + e }, { quoted: mek } )
-		      }
-		break       
-
-	case 'xnxx': 
-		   try {
-	      if (!q) return await conn.sendMessage(from , { text: 'Type a keyword  ex : .xnxx japanese' }, { quoted: mek } ) 
-	       const data = await xnxxSearch(q)
-	       
-		     if (data.length < 1) return await  conn.sendMessage(from, { text: e2Lang.N_FOUND }, { quoted: mek } )
-	  var srh = [];  
-		   for (var i = 0; i < data.length; i++) {
-      srh.push({
-          title: data[i].title,
-          description: data[i].duration + data[i].quality,
-          rowId: prefix + 'dxnxx ' + data[i].link
-      });
-  }
-    const sections = [{
-      title: "Our Porn Store",
-      rows: srh
-  }]
-    const listMessage = {
-      text: " \n Input : " + q + '\n ',
-      footer: config.FOOTER,
-      title: 'Please Select What do you want',
-      buttonText: "Results",
-      sections
-  }
-    await conn.sendMessage(from, listMessage, {quoted: mek })
-		      } catch(e) {
-await conn.sendMessage(from , { text: 'error' }, { quoted: mek } )  
-} 
-		      
- break
-		      
- //_______________________________________________________________________________________________________________________________________________________   //		      
-	// dporn // 
-	
-	case 'dxnxx' :
-	      try {
-	     if(!q) return await conn.sendMessage(from , { text: 'need link' }, { quoted: mek } )      
-	     
-              const data = await xnxxDown(q)      
-const waladown = await conn.sendMessage(from , { text: config.VIDEO_DOWN }, { quoted: mek } )
-await conn.sendMessage(from, { delete: waladown.key })
-const walaup = await conn.sendMessage(from , { text: config.VIDEO_UP }, { quoted: mek } )
-await conn.sendMessage(from ,{ video: { url : data.url } , caption: config.CAPTION } , { quoted: mek })
-await conn.sendMessage(from, { delete: walaup.key })
-		      
-	      } catch(e) {
-		await conn.sendMessage(from , { text: 'error' }, { quoted: mek } )      
-	      }      
-	      break  
-		     
-		
-	case 'xvideos': 
-		   try {
-	      if (!q) return await conn.sendMessage(from , { text: 'Type a keyword  ex : .xvideos japanese' }, { quoted: mek } ) 
-	       const data = await xvideosSearch(q)
-	       
-		     if (data.length < 1) return await  conn.sendMessage(from, { text: e2Lang.N_FOUND }, { quoted: mek } )
-	  var srh = [];  
-		   for (var i = 0; i < data.length; i++) {
-      srh.push({
-          title: data[i].title,
-          description: data[i].duration + data[i].quality,
-          rowId: prefix + 'dxvideos ' + data[i].url
-      });
-  }
-    const sections = [{
-      title: "Our Porn Store",
-      rows: srh
-  }]
-    const listMessage = {
-      text: " \n Input : " + q + '\n ',
-      footer: config.FOOTER,
-      title: 'Please Select What do you want',
-      buttonText: "Results",
-      sections
-  }
-    await conn.sendMessage(from, listMessage, {quoted: mek })
-		      } catch(e) {
-await conn.sendMessage(from , { text: 'error' }, { quoted: mek } )  
-} 
-		      
- break
-		      
- //_______________________________________________________________________________________________________________________________________________________   //		      
-	// dporn // 
-	
-	case 'dxvideos' :
-	      try {
-	     if(!q) return await conn.sendMessage(from , { text: 'need link' }, { quoted: mek } )      
-	     
-              const data = await xvideosDown(q)      
-const waladown = await conn.sendMessage(from , { text: config.VIDEO_DOWN }, { quoted: mek } )
-await conn.sendMessage(from, { delete: waladown.key })
-const walaup = await conn.sendMessage(from , { text: config.VIDEO_UP }, { quoted: mek } )
-await conn.sendMessage(from ,{ video: { url : data.url } , caption: config.CAPTION } , { quoted: mek })
-await conn.sendMessage(from, { delete: walaup.key })
-		      
-	      } catch(e) {
-		await conn.sendMessage(from , { text: 'error' }, { quoted: mek } )      
-	      }      
-	      break  
-	       
+		           
 
       }
 
